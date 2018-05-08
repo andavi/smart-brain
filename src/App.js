@@ -24,7 +24,7 @@ const particlesOptions = {
 const initialState = {
   input: '',
   imageUrl: '',
-  box: {},
+  boxes: [],
   route: 'signin',
   isSignedIn: false,
   user: {
@@ -43,7 +43,7 @@ class App extends Component {
     this.state = {
       input: '',
       imageUrl: '',
-      box: {},
+      boxes: [],
       route: 'signin',
       isSignedIn: false,
       user: {
@@ -74,21 +74,31 @@ class App extends Component {
       .then(console.log);
   }
 
-  calculateFaceLocation = (data) => {
-    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
-    const image = document.getElementById('inputimage');
-    const width = Number(image.width);
-    const height = Number(image.height);
-    return {
-      leftCol: clarifaiFace.left_col * width,
-      topRow: clarifaiFace.top_row * height,
-      rightCol: width - (clarifaiFace.right_col * width),
-      bottomRow: height - (clarifaiFace.bottom_row * height)
+  calculateFaceLocations = (data) => {
+    const regions = data.outputs[0].data.regions;
+    console.log('boxes:', regions.length);
+    let boxes = [];
+    if (!regions) {
+      return [];
     }
+    regions.forEach(region => {
+      const boundingBox = region.region_info.bounding_box;
+      const image = document.getElementById('inputimage');
+      const width = Number(image.width);
+      const height = Number(image.height);
+      boxes.push({
+        leftCol: boundingBox.left_col * width,
+        topRow: boundingBox.top_row * height,
+        rightCol: width - (boundingBox.right_col * width),
+        bottomRow: height - (boundingBox.bottom_row * height)
+      });
+    });
+    return boxes;
   }
 
-  displayFaceBox = (box) => {
-    this.setState({box: box})
+  displayFaceBoxes = (boxes) => {
+    console.log(boxes);
+    this.setState({boxes: boxes});
   }
 
   onInputChange = (event) => {
@@ -120,7 +130,7 @@ class App extends Component {
             })
             .catch(console.log);
         }
-        this.displayFaceBox(this.calculateFaceLocation(response))
+        this.displayFaceBoxes(this.calculateFaceLocations(response))
       })
       .catch(console.log);
   }
@@ -135,7 +145,7 @@ class App extends Component {
   }
 
   render() {
-    const { isSignedIn, imageUrl, route, box } = this.state;
+    const { isSignedIn, imageUrl, route, boxes } = this.state;
     return (
       <div className="App">
         <Particles 
@@ -154,7 +164,7 @@ class App extends Component {
               onInputChange={this.onInputChange} 
               onPhotoSubmit={this.onPhotoSubmit}
             />
-            <FaceRecognition imageUrl={imageUrl} box={box}/>
+            <FaceRecognition imageUrl={imageUrl} boxes={boxes}/>
           </div>
           : ( 
             route === 'signin' 
