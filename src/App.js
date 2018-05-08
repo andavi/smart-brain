@@ -76,10 +76,13 @@ class App extends Component {
 
   calculateFaceLocations = (data) => {
     const regions = data.outputs[0].data.regions;
-    console.log('boxes:', regions.length);
+    
     let boxes = [];
     if (!regions) {
+      console.log('Zero faces detected');
       return [];
+    } else {
+      console.log(`${regions.length} faces detected`);
     }
     regions.forEach(region => {
       const boundingBox = region.region_info.bounding_box;
@@ -97,7 +100,6 @@ class App extends Component {
   }
 
   displayFaceBoxes = (boxes) => {
-    console.log(boxes);
     this.setState({boxes: boxes});
   }
 
