@@ -23,7 +23,6 @@ const particlesOptions = {
 
 const initialState = {
   input: '',
-  // imageUrl: 'https://secure.meetupstatic.com/photos/member/7/b/b/f/highres_276451679.jpeg',
   imageUrl: '',
   box: {},
   route: 'signin',
@@ -43,7 +42,6 @@ class App extends Component {
     super();
     this.state = {
       input: '',
-      // imageUrl: 'https://secure.meetupstatic.com/photos/member/7/b/b/f/highres_276451679.jpeg',
       imageUrl: '',
       box: {},
       route: 'signin',
