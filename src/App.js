@@ -76,7 +76,6 @@ class App extends Component {
 
   calculateFaceLocations = (data) => {
     const regions = data.outputs[0].data.regions;
-    
     let boxes = [];
     if (!regions) {
       console.log('Zero faces detected');
